@@ -1,7 +1,7 @@
 
 - name: Docker installation
   hosts: localhost
-  become: yes
+  connection: local
   tasks:
   - name: Uninstall old versions of docker
     apt:
