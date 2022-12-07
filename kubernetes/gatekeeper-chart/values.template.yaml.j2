@@ -1,0 +1,26 @@
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+  hosts:
+    - host: "{{ gatekeeper_values[app]['host'] }}"
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+keycloak:
+  # Url d'accès à keycloak : https://<fqdn de keycloak>/realms/<nom du realm>
+  keycloakUrl: "https://{{ keycloak_url }}/{{ keycloak_url_realm }}"
+  # Nom du "Client Id", voir https://git.irt-systemx.fr/mickael.patron1/monapp/-/blob/master/keycloak_configuration.md
+  clientId: {{ app }}-id
+  # Valeur du password, voir les crédentials dans https://git.irt-systemx.fr/mickael.patron1/monapp/-/blob/master/keycloak_configuration.md
+  clientSecret: "{{ gatekeeper_values[app]['client_secret'] }}"
+  # Les mots de passe du l'application pour la communication avec keycloak. Y mettre une valeur random.
+  # exemple : tr -dc A-Za-z0-9 </dev/urandom | head -c 32 ; echo ''
+  encryptionKey: {{ gatekeeper_values[app]['encryption_key'] }}
+  upstreamUrl: http://{{ gatekeeper_values[app]['service_name'] }}.{{ env_ns_confiance }}.svc.cluster.local:{{ gatekeeper_values[app]['port'] }}
+  corsOrigins: https://{{ cookie_domain }}.{{ irt_domain }}
+  cookieDomain: {{ cookie_domain }}.{{ irt_domain }}

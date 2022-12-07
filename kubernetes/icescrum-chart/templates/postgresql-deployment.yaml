@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: postgres-icescrum
+  name: icescrum-postgresql
+spec:
+  selector:
+    matchLabels:
+      app: postgres-icescrum-storage
+      name: postgres-icescrum-storage
+  template:
+    metadata:
+      labels:
+        app: postgres-icescrum-storage
+        name: postgres-icescrum-storage
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_DB
+          value: icescrum
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: PASSWORD
+              name: postgresql-config
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: USER
+              name: postgresql-config
+        image: postgres:9.6
+        imagePullPolicy: IfNotPresent
+        name: postgres
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2Gi
+          requests:
+            cpu: 300m
+            memory: 500Mi
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: icescrum-postgresql-storage
+          subPath: postgres
+      volumes:
+      - name: icescrum-postgresql-storage
+        persistentVolumeClaim:
+          claimName: icescrum-postgresql-storage
+

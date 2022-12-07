@@ -1,0 +1,95 @@
+# Default values for gatekeeper-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: quay.io/gogatekeeper/gatekeeper
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+  hosts:
+    - host: app.confiance.irtsysx.fr
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+keycloak:
+  # Url d'accès à keycloak : https://<fqdn de keycloak>/auth/realms/<nom du realm>
+  keycloakUrl: https://keycloak.confiance.irtsysx.fr/auth/realms/confianceai
+  # Nom du "Client Id", voir https://git.irt-systemx.fr/mickael.patron1/monapp/-/blob/master/keycloak_configuration.md
+  clientId: pixano-id
+  # Valeur du password, voir les crédentials dans https://git.irt-systemx.fr/mickael.patron1/monapp/-/blob/master/keycloak_configuration.md
+  clientSecret: b5eb73b6-48bf-45fb-9556-3a418aac448c
+  # Les mots de passe du l'application pour la communication avec keycloak. Y mettre une valeur random.
+  # exemple : tr -dc A-Za-z0-9 </dev/urandom | head -c 32 ; echo ''
+  encryptionKey: Xa6LaeNIwEcvT1SegCRuo7ZVEbcikh2J
+  # upstream-url=http://{{ .Service.Name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }} Rq: souvent, Service = Chart
+  upstreamUrl: http://pixano-chart.tst.svc.cluster.local:3000
+  corsOrigins: https://confiance.irtsysx.fr
+  cookieDomain: confiance.irtsysx.fr
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []

@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gatekeeper-chart.fullname" . }}
+  labels:
+    {{- include "gatekeeper-chart.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "gatekeeper-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "gatekeeper-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "gatekeeper-chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:          
+            - --discovery-url={{ .Values.keycloak.keycloakUrl }}
+            - --client-id={{ .Values.keycloak.clientId }}
+            - --client-secret={{ .Values.keycloak.clientSecret }}
+            - --listen=0.0.0.0:{{ .Values.service.port }}
+            - --secure-cookie=false
+            - --upstream-url={{ .Values.keycloak.upstreamUrl }}
+            - --enable-refresh-tokens=true
+            - --encryption-key={{ .Values.keycloak.encryptionKey }}
+            - --enable-logging=true
+            - --preserve-host=true
+            - --verbose=true
+            - --cors-origins={{ .Values.keycloak.corsOrigins }}
+            - --cors-methods=["GET","POST","HEAD","DELETE","PUT"]
+            - --cors-credentials=true
+            - --cookie-domain={{ .Values.keycloak.cookieDomain }}
+            # - --resources=uri=/*|roles=uma_authorization
+            # - --resources=uri=/*|roles=*
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

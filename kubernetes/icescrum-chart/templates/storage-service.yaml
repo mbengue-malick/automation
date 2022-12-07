@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: icescrum-storage-service
+  labels:
+    app: postgres-icescrum
+spec:
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  selector:
+    app: postgres-icescrum-storage
+    name: postgres-icescrum-storage
+  type: ClusterIP
