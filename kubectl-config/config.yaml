@@ -1,0 +1,23 @@
+clusters:
+  confianceai-interne:
+    client_secret: bedc7a29-ee3c-45c4-842e-8ccacf796ec0
+    realm_url: https://keycloak.irtsysx.fr/auth/realms/smite
+    token_url: https://keycloak.irtsysx.fr/auth/realms/smite/protocol/openid-connect/token
+  confianceai-public:
+    client_secret: bedc7a29-ee3c-45c4-842e-8ccacf796ec0
+    realm_url: https://keycloak.irtsysx.fr/auth/realms/smite
+    token_url: https://keycloak.irtsysx.fr/auth/realms/smite/protocol/openid-connect/token
+  interne:
+    client_secret: bedc7a29-ee3c-45c4-842e-8ccacf796ec0
+    realm_url: https://keycloak.irtsysx.fr/auth/realms/smite
+    token_url: https://keycloak.irtsysx.fr/auth/realms/smite/protocol/openid-connect/token 
+  public:
+    client_secret: bedc7a29-ee3c-45c4-842e-8ccacf796ec0
+    realm_url: https://keycloak.irtsysx.fr/auth/realms/smite
+    token_url: https://keycloak.irtsysx.fr/auth/realms/smite/protocol/openid-connect/token
+  public-v2:
+    client_secret: bedc7a29-ee3c-45c4-842e-8ccacf796ec0
+    realm_url: https://keycloak.irtsysx.fr/auth/realms/smite
+    token_url: https://keycloak.irtsysx.fr/auth/realms/smite/protocol/openid-connect/token
+current_cluster: confianceai-interne
+username: {{username}}

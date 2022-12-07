@@ -1,0 +1,31 @@
+# Kubectl config
+
+## Disclaimer
+
+Cette configuration automatisée ne fonctionne que sur :
+
+- Linux
+- Microsoft WSL 2
+
+Pour installer et configurer kubectl et les outils de login IRT sur Windows, des modifications seront à faire sur le script python, et l'installation devra être faite manuellement.
+
+## Installation
+
+Lancer le script `install_and_config_kubectl.sh`.
+
+```
+$ ./install_and_config_kubectl.sh
+```
+## Connexion à un cluster
+
+- Pour se connecter au cluster Confiance.AI interne : `k login confianceai-interne`
+
+- Pour se connecter au cluster Confiance.AI public (OVH) : `k login confianceai-public`
+
+> Les identifiants sont vos identifiants keycloak.
+
+### Config backup
+
+Dans le cas où une config kubectl exite déjà, le script en fait un backup avant toute manipulation.
+
+Le script est capable de compléter une configuration existante, ou d'en recréer une nouvelle.
