@@ -1,0 +1,31 @@
+## ansible-galaxy collection install kubernetes.core
+
+- name: prerequisites
+  apt:
+    name: python3-yaml
+    state: present
+
+- name: Install helm if not exists
+  unarchive:
+    src: "https://get.helm.sh/helm-v{{ addons_helm_version }}-linux-amd64.tar.gz"
+    dest: /usr/local/bin
+    extra_opts: "--strip-components=1"
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: true
+  args:
+    creates: /usr/local/bin/helm
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: ingress-nginx
+    repo_url: "https://kubernetes.github.io/ingress-nginx"
+
+- name: Deploy nginx ingress controller
+  kubernetes.core.helm:
+    name: nginx
+    chart_ref: ingress-nginx/ingress-nginx
+    release_namespace: ingress-nginx
+    create_namespace: true
+    values: "{{ lookup('template', 'ingress-values.yml') | from_yaml }}"

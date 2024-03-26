@@ -1,0 +1,22 @@
+# - name: load balancer
+#   hosts: localhost
+#   become: true
+#   roles:
+#   - haproxy
+
+- name: Install kubernetes cluster
+  hosts: k8s_masters,k8s_workers
+  become: yes
+  serial: 
+#  - 1
+#  - 1
+  - 1
+  - "100%"
+  roles:
+  - roles/kubernetes
+
+- name: ingress controller
+  hosts: kubm1
+  become: true
+  roles:
+  - addons

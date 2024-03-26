@@ -1,0 +1,13 @@
+---
+# handlers file for roles/kubernetes
+
+- name: restart_containerd
+  service:
+    name: containerd
+    state: restarted
+
+- name: update_apt_cache
+  apt:
+    update_cache: yes
+
+    

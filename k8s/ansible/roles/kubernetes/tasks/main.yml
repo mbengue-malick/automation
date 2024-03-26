@@ -1,0 +1,13 @@
+---
+# tasks file for roles/kubernetes
+
+- name: pre-requisites
+  include_tasks: pre-requisites.yml
+
+- name: init cluster
+  include_tasks: init.yml
+  when: kubeadm_init_master == ansible_hostname and ansible_hostname in groups[kube_master_group_name]
+
+- name: Join server
+  include_tasks: join.yml
+  when: kubeadm_init_master != ansible_hostname

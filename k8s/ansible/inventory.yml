@@ -1,0 +1,28 @@
+all:
+  hosts:
+    localhost:
+      ansible_connection: local
+      ansible_user: devops
+      ansible_password: secret
+  children:
+    kubernetes:
+      children:
+        k8s_masters:
+          hosts:
+            kubm1: 
+              ansible_host: 192.168.10.10
+              ansible_user: vagrant
+            kubm2: 
+              ansible_host: 192.168.10.11
+              ansible_user: vagrant
+            kubm3: 
+              ansible_host: 192.168.10.12
+              ansible_user: vagrant
+        k8s_workers:
+          hosts:
+            kubw1: 
+              ansible_host: 192.168.10.13
+              ansible_user: vagrant
+            kubw2: 
+              ansible_host: 192.168.10.14
+              ansible_user: vagrant
